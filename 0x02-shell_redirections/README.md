@@ -1,1 +1,1 @@
-It is for shell input and output permissions
+It's for shell redirections
