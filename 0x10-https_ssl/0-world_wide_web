@@ -10,6 +10,12 @@ fi
 # Set domain name
 domain="$1"
 
+# Define an associative array to store expected IP addresses for each subdomain
+declare -A expected_ips
+expected_ips["www"]="35.153.226.70"
+expected_ips["web-01"]="3.85.54.116"
+expected_ips["web-02"]="3.84.161.57"
+
 # Set subdomains to query
 subdomains=("www" "lb-01" "web-01" "web-02")
 
@@ -23,6 +29,12 @@ for subdomain in "${subdomains[@]}"; do
   output=$(dig "$subdomain.$domain" +short)
   if [ -n "$output" ]; then
     echo "The subdomain $subdomain has IP address $output"
+    # Check if the retrieved IP matches the expected IP
+    if [[ "${expected_ips[$subdomain]}" == "$output" ]]; then
+      echo "Expected IP matches retrieved IP"
+    else
+      echo "Expected IP (${expected_ips[$subdomain]}) does not match retrieved IP ($output)"
+    fi
   else
     echo "The subdomain $subdomain does not exist"
   fi
